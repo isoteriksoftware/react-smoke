@@ -1,0 +1,97 @@
+{
+  "name": "react-smoke",
+  "private": false,
+  "version": "1.5.2",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev-exposed": "vite --host",
+    "build": "tsc && vite build",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "eslint --fix 'src/**/*.{jsx,ts,tsx}'",
+    "preview": "vite preview",
+    "format": "prettier --write src//**/*.{ts,tsx} --config ./.prettierrc",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "yarn  lint",
+      "yarn  format"
+    ]
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/react-smoke.es.js",
+      "require": "./dist/react-smoke.umd.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/react-smoke.umd.js",
+  "module": "./dist/react-smoke.es.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {},
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0",
+    "@react-three/drei": ">=9.88.11",
+    "@react-three/fiber": ">=8.15.10",
+    "three": ">=0.158.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/three": "^0.158.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.2",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hooks": "^1.0.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.6.3",
+    "vite-plugin-linter": "^2.0.7",
+    "vite-tsconfig-paths": "^4.2.1",
+    "@react-three/drei": "^9.88.11",
+    "@react-three/fiber": "^8.15.10",
+    "three": "^0.158.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/isoteriksoftware/react-smoke"
+  },
+  "description": "Effortlessly integrate captivating smoke effects into your React applications using Three.js and React Three Fiber (R3F)",
+  "keywords": [
+    "smoke",
+    "react-smoke",
+    "react smoke",
+    "react",
+    "react-three-fiber",
+    "react-three-drei",
+    "threejs",
+    "3d"
+  ],
+  "author": "isoteriksoftware",
+  "bugs": {
+    "url": "https://github.com/isoteriksoftware/react-smoke/issues"
+  },
+  "homepage": "https://github.com/isoteriksoftware/react-smoke#readme",
+  "license": "MIT"
+}
