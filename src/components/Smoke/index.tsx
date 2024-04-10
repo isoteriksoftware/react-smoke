@@ -28,6 +28,9 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
         opacity: opacity,
         depthWrite: false,
         color: color,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
       });
     }
 
@@ -50,8 +53,6 @@ export const Smoke = ({
   size = [1000, 1000, 1000],
   castShadow = false,
   receiveShadow = false,
-  enableInteraction = false,
-  repulsionStrength = 0.0001,
   windStrength = [0.001, 0.001, 0.001],
   windDirection = [1, 0, 0],
   enableWind = false,
@@ -75,8 +76,6 @@ export const Smoke = ({
       size,
       castShadow,
       receiveShadow,
-      enableInteraction,
-      repulsionStrength,
       windStrength,
       windDirection,
       enableWind,
@@ -99,8 +98,6 @@ export const Smoke = ({
       size,
       castShadow,
       receiveShadow,
-      enableInteraction,
-      repulsionStrength,
       windStrength,
       windDirection,
       enableWind,
@@ -142,6 +139,8 @@ export const Smoke = ({
       const particle = new THREE.Mesh(geometries[p], materials[p]);
       particle.position.set(x, y, z);
 
+      particle.userData.size = new THREE.Vector3(size[0], size[1], size[2]).length() / 2;
+
       particle.userData.velocity = new THREE.Vector3(
         Math.random() * maxVelocity * 2 - maxVelocity,
         Math.random() * maxVelocity * 2 - maxVelocity,
@@ -178,6 +177,7 @@ export const Smoke = ({
     maxVelocity,
     minBounds,
     rotation,
+    size,
   ]);
 
   useFrame(() => {
@@ -205,24 +205,9 @@ export const Smoke = ({
         velocity.z += windDirection[2] * windStrength[2];
       }
 
-      // Particle interaction
-      if (enableInteraction) {
-        particles.forEach((otherParticle) => {
-          if (particle !== otherParticle) {
-            const distance = particle.position.distanceTo(otherParticle.position);
-            const minDistance = particle.userData.size + otherParticle.userData.size;
-            if (distance < minDistance) {
-              // Apply repulsion force
-              const direction = particle.position.clone().sub(otherParticle.position).normalize();
-              const repulsionForce = direction.multiplyScalar(repulsionStrength);
-              velocity.sub(repulsionForce);
-            }
-          }
-        });
-      }
-
       // Clamp velocity to maximum value
       velocity.clampScalar(-maxVelocity, maxVelocity);
+      velocity.z = 0; // Disable z-axis movement
 
       // Apply velocity
       particle.position.add(velocity);

@@ -28,11 +28,9 @@ export type SmokeProps = {
   size?: ThreeAxisValue;
   castShadow?: boolean;
   receiveShadow?: boolean;
-  enableInteraction?: boolean;
   windStrength?: ThreeAxisValue;
   windDirection?: ThreeAxisValue;
   enableWind?: boolean;
-  repulsionStrength?: number;
   enableRotation?: boolean;
   rotation?: ThreeAxisValue;
   textures: [string, ...rest: string[]];
