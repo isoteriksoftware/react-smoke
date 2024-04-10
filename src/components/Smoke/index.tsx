@@ -192,9 +192,7 @@ export const Smoke = ({
 
   useFrame(() => {
     if (enableFrustumCulling) {
-      // Update the camera's view projection matrix
       camera.updateMatrixWorld();
-      // Update the frustum with the new view projection matrix
       frustum.setFromProjectionMatrix(camera.projectionMatrix);
       frustum.planes.forEach(function (plane) {
         plane.applyMatrix4(camera.matrixWorld);
@@ -202,7 +200,9 @@ export const Smoke = ({
     }
 
     particles.forEach((particle) => {
-      boundingBox.setFromObject(particle);
+      if (enableFrustumCulling) {
+        boundingBox.setFromObject(particle);
+      }
 
       if (!enableFrustumCulling || (enableFrustumCulling && frustum.intersectsBox(boundingBox))) {
         const velocity: THREE.Vector3 = particle.userData.velocity;
