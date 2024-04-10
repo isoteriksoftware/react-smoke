@@ -19,6 +19,7 @@ export type SmokeProps = {
   turbulenceStrength?: ThreeAxisValue;
   enableTurbulence?: boolean;
   maxVelocity?: number;
+  velocityResetFactor?: number;
   minBounds?: ThreeAxisValue;
   maxBounds?: ThreeAxisValue;
   opacity?: number;
@@ -32,6 +33,8 @@ export type SmokeProps = {
   windDirection?: ThreeAxisValue;
   enableWind?: boolean;
   repulsionStrength?: number;
+  enableRotation?: boolean;
+  rotation?: ThreeAxisValue;
   textures: [string, ...rest: string[]];
   particleGeometry?: ParticleGeometryGenerator;
   particleMaterial?: ParticleMaterialGenerator;

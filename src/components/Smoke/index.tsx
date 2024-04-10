@@ -41,6 +41,7 @@ export const Smoke = ({
   turbulenceStrength = [0.001, 0.001, 0.001],
   enableTurbulence = false,
   maxVelocity = 0.5,
+  velocityResetFactor = 0.05,
   minBounds = [-800, -800, -800],
   maxBounds = [800, 800, 800],
   opacity = 0.5,
@@ -54,6 +55,8 @@ export const Smoke = ({
   windStrength = [0.001, 0.001, 0.001],
   windDirection = [1, 0, 0],
   enableWind = false,
+  enableRotation = true,
+  rotation = [0, 0, 0.0011],
   textures,
   particleGeometry = getDefaultParticleGeometryGenerator(),
   particleMaterial = getDefaultParticleMaterialGenerator(),
@@ -63,6 +66,7 @@ export const Smoke = ({
       turbulenceStrength,
       enableTurbulence,
       maxVelocity,
+      velocityResetFactor,
       minBounds,
       maxBounds,
       opacity,
@@ -76,6 +80,8 @@ export const Smoke = ({
       windStrength,
       windDirection,
       enableWind,
+      enableRotation,
+      rotation,
       textures,
       particleGeometry,
       particleMaterial,
@@ -84,6 +90,7 @@ export const Smoke = ({
       turbulenceStrength,
       enableTurbulence,
       maxVelocity,
+      velocityResetFactor,
       minBounds,
       maxBounds,
       opacity,
@@ -97,6 +104,8 @@ export const Smoke = ({
       windStrength,
       windDirection,
       enableWind,
+      enableRotation,
+      rotation,
       textures,
       particleGeometry,
       particleMaterial,
@@ -131,7 +140,6 @@ export const Smoke = ({
       const z = Math.random() * (maxBounds[2] - minBounds[2]) + minBounds[2];
 
       const particle = new THREE.Mesh(geometries[p], materials[p]);
-      //const particle = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), materials[0]);
       particle.position.set(x, y, z);
 
       particle.userData.velocity = new THREE.Vector3(
@@ -139,6 +147,14 @@ export const Smoke = ({
         Math.random() * maxVelocity * 2 - maxVelocity,
         Math.random() * maxVelocity * 2 - maxVelocity,
       );
+
+      if (enableRotation) {
+        const [rx, ry, rz] = rotation;
+        const rotationX = Math.random() * rx * 2 - rx;
+        const rotationY = Math.random() * ry * 2 - ry;
+        const rotationZ = Math.random() * rz * 2 - rz;
+        particle.rotation.set(rotationX, rotationY, rotationZ);
+      }
 
       if (enableTurbulence) {
         particle.userData.turbulence = new THREE.Vector3(
@@ -152,11 +168,21 @@ export const Smoke = ({
     }
 
     return smokeParticles;
-  }, [density, enableTurbulence, geometries, materials, maxBounds, maxVelocity, minBounds]);
+  }, [
+    density,
+    enableRotation,
+    enableTurbulence,
+    geometries,
+    materials,
+    maxBounds,
+    maxVelocity,
+    minBounds,
+    rotation,
+  ]);
 
   useFrame(() => {
     particles.forEach((particle) => {
-      const velocity = particle.userData.velocity;
+      const velocity: THREE.Vector3 = particle.userData.velocity;
       const turbulence = particle.userData.turbulence;
 
       // Apply turbulence if enabled
@@ -179,12 +205,6 @@ export const Smoke = ({
         velocity.z += windDirection[2] * windStrength[2];
       }
 
-      // Clamp velocity to maximum value
-      velocity.clampScalar(-maxVelocity, maxVelocity);
-
-      // Apply velocity
-      particle.position.add(velocity);
-
       // Particle interaction
       if (enableInteraction) {
         particles.forEach((otherParticle) => {
@@ -199,6 +219,20 @@ export const Smoke = ({
             }
           }
         });
+      }
+
+      // Clamp velocity to maximum value
+      velocity.clampScalar(-maxVelocity, maxVelocity);
+
+      // Apply velocity
+      particle.position.add(velocity);
+
+      // Apply rotation
+      if (enableRotation) {
+        const [rx, ry, rz] = rotation;
+        particle.rotation.x += rx;
+        particle.rotation.y += ry;
+        particle.rotation.z += rz;
       }
 
       // Smoothly transition particles back within the bounds
@@ -216,7 +250,7 @@ export const Smoke = ({
         if (velocity) {
           const center = new THREE.Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
           const targetDirection = center.clone().sub(particle.position).normalize();
-          velocity.add(targetDirection.multiplyScalar(0.05));
+          velocity.add(targetDirection.multiplyScalar(velocityResetFactor));
         }
 
         // Reset turbulence
