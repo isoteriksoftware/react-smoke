@@ -39,13 +39,13 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
 export const Smoke = ({
   turbulence = 0.001,
   enableTurbulence = false,
-  maxVelocity = 0.02,
-  minBounds = [-400, -400, -400],
-  maxBounds = [400, 400, 400],
+  maxVelocity = 0.5,
+  minBounds = [-800, -800, -800],
+  maxBounds = [800, 800, 800],
   opacity = 0.5,
   color = "white",
-  density = 150,
-  size = [700, 700, 10],
+  density = 50,
+  size = [1000, 1000, 1000],
   castShadow = false,
   receiveShadow = false,
   enableInteraction = false,
@@ -173,7 +173,7 @@ export const Smoke = ({
       }
 
       // Apply velocity
-      //particle.position.add(velocity);
+      particle.position.add(velocity);
 
       // Particle interaction
       if (enableInteraction) {
@@ -191,7 +191,7 @@ export const Smoke = ({
         });
       }
 
-      // Reset particles outside the range
+      // Smoothly transition particles back within the bounds
       const [minX, minY, minZ] = minBounds;
       const [maxX, maxY, maxZ] = maxBounds;
       if (
@@ -202,17 +202,11 @@ export const Smoke = ({
         particle.position.z < minZ ||
         particle.position.z > maxZ
       ) {
-        // particle.position.x = Math.random() * (maxX - minX) + minX;
-        // particle.position.y = Math.random() * (maxY - minY) + minY;
-        // particle.position.z = Math.random() * (maxZ - minZ) + minZ;
-
         // Reset velocity
         if (velocity) {
-          velocity.set(
-            Math.random() * maxVelocity * 2 - maxVelocity,
-            Math.random() * maxVelocity * 2 - maxVelocity,
-            Math.random() * maxVelocity * 2 - maxVelocity,
-          );
+          const center = new THREE.Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+          const targetDirection = center.clone().sub(particle.position).normalize();
+          velocity.add(targetDirection.multiplyScalar(0.05));
         }
 
         // Reset turbulence

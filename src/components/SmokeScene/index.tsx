@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Smoke } from "../Smoke";
 import smokeImage from "../../core/assets/smoke-default.png";
 import * as THREE from "three";
-import { Box, OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, Stats } from "@react-three/drei";
 
 export const SmokeScene = () => {
   return (
@@ -38,8 +38,6 @@ export const SmokeScene = () => {
           minPolarAngle={Math.PI / 2 - 0.5}
           maxPolarAngle={Math.PI / 2 - 0.01}
         />
-
-        <Box args={[10, 10, 10]} receiveShadow castShadow position={[0, 0, 0]} />
       </Canvas>
     </div>
   );
