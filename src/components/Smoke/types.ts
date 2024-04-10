@@ -1,5 +1,4 @@
-import { Color } from "@react-three/fiber";
-import { BufferGeometry, Material, Texture } from "three";
+import { BufferGeometry, Material, Texture, Color } from "three";
 
 export type ThreeAxisValue = [x: number, y: number, z: number];
 
@@ -12,12 +11,12 @@ export type ParticleGeometryGenerator = (
 
 export type ParticleMaterialGenerator = (
   index: number,
-  texture: Texture,
+  textures: Texture[],
   props: Required<SmokeProps>,
 ) => Material;
 
 export type SmokeProps = {
-  turbulence?: number;
+  turbulenceStrength?: ThreeAxisValue;
   enableTurbulence?: boolean;
   maxVelocity?: number;
   minBounds?: ThreeAxisValue;

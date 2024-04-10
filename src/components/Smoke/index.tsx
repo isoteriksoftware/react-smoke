@@ -20,13 +20,14 @@ export const getDefaultParticleGeometryGenerator = (): ParticleGeometryGenerator
 export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator => {
   let material: THREE.MeshLambertMaterial;
 
-  const generator: ParticleMaterialGenerator = (_, texture, { opacity }) => {
+  const generator: ParticleMaterialGenerator = (_, textures, { opacity, color }) => {
     if (!material) {
       material = new THREE.MeshLambertMaterial({
-        map: texture,
+        map: textures[Math.floor(Math.random() * textures.length)],
         transparent: true,
         opacity: opacity,
         depthWrite: false,
+        color: color,
       });
     }
 
@@ -37,13 +38,13 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
 };
 
 export const Smoke = ({
-  turbulence = 0.001,
+  turbulenceStrength = [0.001, 0.001, 0.001],
   enableTurbulence = false,
   maxVelocity = 0.5,
   minBounds = [-800, -800, -800],
   maxBounds = [800, 800, 800],
   opacity = 0.5,
-  color = "white",
+  color = new THREE.Color(0xffffff),
   density = 50,
   size = [1000, 1000, 1000],
   castShadow = false,
@@ -59,7 +60,7 @@ export const Smoke = ({
 }: SmokeProps) => {
   const props: Required<SmokeProps> = useMemo(
     () => ({
-      turbulence,
+      turbulenceStrength,
       enableTurbulence,
       maxVelocity,
       minBounds,
@@ -80,7 +81,7 @@ export const Smoke = ({
       particleMaterial,
     }),
     [
-      turbulence,
+      turbulenceStrength,
       enableTurbulence,
       maxVelocity,
       minBounds,
@@ -114,8 +115,11 @@ export const Smoke = ({
   );
 
   const materials = useMemo(
-    () => textureVariants.map((texture, index) => particleMaterial(index, texture, props)),
-    [particleMaterial, props, textureVariants],
+    () =>
+      Array.from({ length: density }, (_, index) =>
+        particleMaterial(index, textureVariants, props),
+      ),
+    [density, particleMaterial, props, textureVariants],
   );
 
   const particles = useMemo(() => {
@@ -126,10 +130,7 @@ export const Smoke = ({
       const y = Math.random() * (maxBounds[1] - minBounds[1]) + minBounds[1];
       const z = Math.random() * (maxBounds[2] - minBounds[2]) + minBounds[2];
 
-      const particle = new THREE.Mesh(
-        geometries[p],
-        materials[Math.floor(Math.random() * materials.length)],
-      );
+      const particle = new THREE.Mesh(geometries[p], materials[p]);
       //const particle = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), materials[0]);
       particle.position.set(x, y, z);
 
@@ -159,10 +160,16 @@ export const Smoke = ({
       const turbulence = particle.userData.turbulence;
 
       // Apply turbulence if enabled
-      if (enableWind) {
-        velocity.x += Math.sin(turbulence.x) * turbulence;
-        velocity.y += Math.sin(turbulence.y) * turbulence;
-        velocity.z += Math.sin(turbulence.z) * turbulence;
+      if (enableTurbulence) {
+        // Calculate turbulence force vector
+        const turbulenceForce = new THREE.Vector3(
+          Math.sin(turbulence.x) * turbulence.length() * turbulenceStrength[0],
+          Math.sin(turbulence.y) * turbulence.length() * turbulenceStrength[1],
+          Math.sin(turbulence.z) * turbulence.length() * turbulenceStrength[2],
+        );
+
+        // Apply turbulence force to velocity
+        velocity.add(turbulenceForce);
       }
 
       // Apply wind effect if enabled
@@ -171,6 +178,9 @@ export const Smoke = ({
         velocity.y += windDirection[1] * windStrength[1];
         velocity.z += windDirection[2] * windStrength[2];
       }
+
+      // Clamp velocity to maximum value
+      velocity.clampScalar(-maxVelocity, maxVelocity);
 
       // Apply velocity
       particle.position.add(velocity);

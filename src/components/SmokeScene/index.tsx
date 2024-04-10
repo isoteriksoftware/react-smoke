@@ -1,11 +1,11 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { Smoke } from "../Smoke";
+import { Smoke, SmokeProps } from "../Smoke";
 import smokeImage from "../../core/assets/smoke-default.png";
 import * as THREE from "three";
 import { OrbitControls, Stats } from "@react-three/drei";
 
-export const SmokeScene = () => {
+export const SmokeScene = (props: Omit<SmokeProps, "textures">) => {
   return (
     <div
       style={{
@@ -17,14 +17,14 @@ export const SmokeScene = () => {
       <Canvas
         camera={{ fov: 60, position: [0, 0, 1200], far: 6000 }}
         scene={{
-          background: new THREE.Color(0x000000),
+          background: new THREE.Color("black"),
         }}
       >
         <directionalLight color="white" intensity={2} position={[-1, 0, 1]} />
-        <ambientLight color="red" intensity={2} />
+        <ambientLight color="white" intensity={2} />
 
         <Suspense fallback={null}>
-          <Smoke textures={[smokeImage]} />
+          <Smoke {...props} textures={[smokeImage]} />
         </Suspense>
 
         <Stats />
