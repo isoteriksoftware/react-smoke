@@ -1,6 +1,6 @@
 import { useFrame, useLoader } from "@react-three/fiber";
 import { ParticleGeometryGenerator, ParticleMaterialGenerator, SmokeProps } from "./types";
-import THREE from "three";
+import * as THREE from "three";
 import { useMemo } from "react";
 
 export const getDefaultParticleGeometryGenerator = (): ParticleGeometryGenerator => {
@@ -38,21 +38,21 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
 
 export const Smoke = ({
   turbulence = 0.001,
-  enableTurbulence = true,
+  enableTurbulence = false,
   maxVelocity = 0.02,
   minBounds = [-400, -400, -400],
   maxBounds = [400, 400, 400],
   opacity = 0.5,
   color = "white",
   density = 150,
-  size = [10, 10, 10],
+  size = [700, 700, 10],
   castShadow = false,
   receiveShadow = false,
   enableInteraction = false,
   repulsionStrength = 0.0001,
   windStrength = [0.001, 0.001, 0.001],
   windDirection = [1, 0, 0],
-  enableWind = true,
+  enableWind = false,
   textures,
   particleGeometry = getDefaultParticleGeometryGenerator(),
   particleMaterial = getDefaultParticleMaterialGenerator(),
@@ -126,10 +126,11 @@ export const Smoke = ({
       const y = Math.random() * (maxBounds[1] - minBounds[1]) + minBounds[1];
       const z = Math.random() * (maxBounds[2] - minBounds[2]) + minBounds[2];
 
-      const particle = new THREE.Points(
+      const particle = new THREE.Mesh(
         geometries[p],
         materials[Math.floor(Math.random() * materials.length)],
       );
+      //const particle = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), materials[0]);
       particle.position.set(x, y, z);
 
       particle.userData.velocity = new THREE.Vector3(
@@ -172,7 +173,7 @@ export const Smoke = ({
       }
 
       // Apply velocity
-      particle.position.add(velocity);
+      //particle.position.add(velocity);
 
       // Particle interaction
       if (enableInteraction) {
@@ -201,9 +202,9 @@ export const Smoke = ({
         particle.position.z < minZ ||
         particle.position.z > maxZ
       ) {
-        particle.position.x = Math.random() * (maxX - minX) + minX;
-        particle.position.y = Math.random() * (maxY - minY) + minY;
-        particle.position.z = Math.random() * (maxZ - minZ) + minZ;
+        // particle.position.x = Math.random() * (maxX - minX) + minX;
+        // particle.position.y = Math.random() * (maxY - minY) + minY;
+        // particle.position.z = Math.random() * (maxZ - minZ) + minZ;
 
         // Reset velocity
         if (velocity) {

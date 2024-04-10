@@ -2,6 +2,8 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Smoke } from "../Smoke";
 import smokeImage from "../../core/assets/smoke-default.png";
+import * as THREE from "three";
+import { Box, OrbitControls, Stats } from "@react-three/drei";
 
 export const SmokeScene = () => {
   return (
@@ -9,27 +11,36 @@ export const SmokeScene = () => {
       style={{
         width: "100vw",
         height: "100vh",
-        position: "relative",
+        position: "fixed",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
+      <Canvas
+        camera={{ fov: 60, position: [0, 0, 1200], far: 6000 }}
+        scene={{
+          background: new THREE.Color(0x000000),
         }}
       >
-        <Canvas camera={{ fov: 60, position: [0, 0, 250], far: 6000 }}>
-          <directionalLight color="white" intensity={2} position={[-1, 0, 1]} />
-          <ambientLight color="red" intensity={2} />
+        <directionalLight color="white" intensity={2} position={[-1, 0, 1]} />
+        <ambientLight color="red" intensity={2} />
 
-          <Suspense fallback={null}>
-            <Smoke textures={[smokeImage]} />
-          </Suspense>
-        </Canvas>
-      </div>
+        <Suspense fallback={null}>
+          <Smoke textures={[smokeImage]} />
+        </Suspense>
+
+        <Stats />
+
+        <OrbitControls
+          enableDamping={true}
+          enableZoom={true}
+          dampingFactor={0.01}
+          autoRotate={false}
+          autoRotateSpeed={-1}
+          minPolarAngle={Math.PI / 2 - 0.5}
+          maxPolarAngle={Math.PI / 2 - 0.01}
+        />
+
+        <Box args={[10, 10, 10]} receiveShadow castShadow position={[0, 0, 0]} />
+      </Canvas>
     </div>
   );
 };
