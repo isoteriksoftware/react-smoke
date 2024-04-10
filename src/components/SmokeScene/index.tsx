@@ -5,7 +5,11 @@ import smokeImage from "../../core/assets/smoke-default.png";
 import * as THREE from "three";
 import { OrbitControls, Stats } from "@react-three/drei";
 
-export const SmokeScene = (props: Omit<SmokeProps, "textures">) => {
+export const SmokeScene = (
+  props: Omit<SmokeProps, "textures"> & {
+    textures?: SmokeProps["textures"];
+  },
+) => {
   return (
     <div
       style={{
@@ -24,7 +28,7 @@ export const SmokeScene = (props: Omit<SmokeProps, "textures">) => {
         <ambientLight color="white" intensity={2} />
 
         <Suspense fallback={null}>
-          <Smoke {...props} textures={[smokeImage]} />
+          <Smoke {...props} textures={props.textures || [smokeImage]} />
         </Suspense>
 
         <Stats />
