@@ -1,4 +1,4 @@
-import { useFrame, useLoader } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { ParticleGeometryGenerator, ParticleMaterialGenerator, SmokeProps } from "./types";
 import * as THREE from "three";
 import { useMemo } from "react";
@@ -41,6 +41,7 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
 };
 
 export const Smoke = ({
+  enableFrustumCulling = true,
   turbulenceStrength = [0.001, 0.001, 0.001],
   enableTurbulence = false,
   maxVelocity = 0.5,
@@ -64,6 +65,7 @@ export const Smoke = ({
 }: SmokeProps) => {
   const props: Required<SmokeProps> = useMemo(
     () => ({
+      enableFrustumCulling,
       turbulenceStrength,
       enableTurbulence,
       maxVelocity,
@@ -86,6 +88,7 @@ export const Smoke = ({
       particleMaterial,
     }),
     [
+      enableFrustumCulling,
       turbulenceStrength,
       enableTurbulence,
       maxVelocity,
@@ -114,6 +117,11 @@ export const Smoke = ({
   }
 
   const textureVariants = useLoader(THREE.TextureLoader, textures);
+
+  const { camera } = useThree();
+
+  const frustum = useMemo(() => new THREE.Frustum(), []);
+  const boundingBox = useMemo(() => new THREE.Box3(), []);
 
   const geometries = useMemo(
     () => Array.from({ length: density }, (_, index) => particleGeometry(index, props)),
@@ -183,70 +191,84 @@ export const Smoke = ({
   const tempVec3 = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(() => {
+    if (enableFrustumCulling) {
+      // Update the camera's view projection matrix
+      camera.updateMatrixWorld();
+      // Update the frustum with the new view projection matrix
+      frustum.setFromProjectionMatrix(camera.projectionMatrix);
+      frustum.planes.forEach(function (plane) {
+        plane.applyMatrix4(camera.matrixWorld);
+      });
+    }
+
     particles.forEach((particle) => {
-      const velocity: THREE.Vector3 = particle.userData.velocity;
-      const turbulence = particle.userData.turbulence;
+      boundingBox.setFromObject(particle);
 
-      // Apply turbulence if enabled
-      if (enableTurbulence) {
-        // Calculate turbulence force vector
-        tempVec3.set(
-          Math.sin(turbulence.x) * turbulence.length() * turbulenceStrength[0],
-          Math.sin(turbulence.y) * turbulence.length() * turbulenceStrength[1],
-          Math.sin(turbulence.z) * turbulence.length() * turbulenceStrength[2],
-        );
+      if (!enableFrustumCulling || (enableFrustumCulling && frustum.intersectsBox(boundingBox))) {
+        const velocity: THREE.Vector3 = particle.userData.velocity;
+        const turbulence = particle.userData.turbulence;
 
-        // Apply turbulence force to velocity
-        velocity.add(tempVec3);
-      }
+        // Apply turbulence if enabled
+        if (enableTurbulence) {
+          // Calculate turbulence force vector
+          tempVec3.set(
+            Math.sin(turbulence.x) * turbulence.length() * turbulenceStrength[0],
+            Math.sin(turbulence.y) * turbulence.length() * turbulenceStrength[1],
+            Math.sin(turbulence.z) * turbulence.length() * turbulenceStrength[2],
+          );
 
-      // Apply wind effect if enabled
-      if (enableWind) {
-        velocity.x += windDirection[0] * windStrength[0];
-        velocity.y += windDirection[1] * windStrength[1];
-        velocity.z += windDirection[2] * windStrength[2];
-      }
-
-      // Clamp velocity to maximum value
-      velocity.clampScalar(-maxVelocity, maxVelocity);
-      velocity.z = 0; // Disable z-axis movement
-
-      // Apply velocity
-      particle.position.add(velocity);
-
-      // Apply rotation
-      if (enableRotation) {
-        const [rx, ry, rz] = rotation;
-        particle.rotation.x += rx;
-        particle.rotation.y += ry;
-        particle.rotation.z += rz;
-      }
-
-      // Smoothly transition particles back within the bounds
-      const [minX, minY, minZ] = minBounds;
-      const [maxX, maxY, maxZ] = maxBounds;
-      if (
-        particle.position.x < minX ||
-        particle.position.x > maxX ||
-        particle.position.y < minY ||
-        particle.position.y > maxY ||
-        particle.position.z < minZ ||
-        particle.position.z > maxZ
-      ) {
-        // Reset velocity
-        if (velocity) {
-          const center = tempVec3.set((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
-          const targetDirection = center.sub(particle.position).normalize();
-          velocity.add(targetDirection.multiplyScalar(velocityResetFactor));
+          // Apply turbulence force to velocity
+          velocity.add(tempVec3);
         }
 
-        // Reset turbulence
-        if (turbulence) {
-          turbulence.set(
-            Math.random() * 2 * Math.PI,
-            Math.random() * 2 * Math.PI,
-            Math.random() * 2 * Math.PI,
-          );
+        // Apply wind effect if enabled
+        if (enableWind) {
+          velocity.x += windDirection[0] * windStrength[0];
+          velocity.y += windDirection[1] * windStrength[1];
+          velocity.z += windDirection[2] * windStrength[2];
+        }
+
+        // Clamp velocity to maximum value
+        velocity.clampScalar(-maxVelocity, maxVelocity);
+        velocity.z = 0; // Disable z-axis movement
+
+        // Apply velocity
+        particle.position.add(velocity);
+
+        // Apply rotation
+        if (enableRotation) {
+          const [rx, ry, rz] = rotation;
+          particle.rotation.x += rx;
+          particle.rotation.y += ry;
+          particle.rotation.z += rz;
+        }
+
+        // Smoothly transition particles back within the bounds
+        const [minX, minY, minZ] = minBounds;
+        const [maxX, maxY, maxZ] = maxBounds;
+        if (
+          particle.position.x < minX ||
+          particle.position.x > maxX ||
+          particle.position.y < minY ||
+          particle.position.y > maxY ||
+          particle.position.z < minZ ||
+          particle.position.z > maxZ
+        ) {
+          // Reset velocity
+          if (velocity) {
+            const center = tempVec3.set((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+            const targetDirection = center.sub(particle.position).normalize();
+            velocity.add(targetDirection.multiplyScalar(velocityResetFactor));
+          }
+
+          // Reset turbulence
+          if (turbulence) {
+            turbulence.set(
+              Math.random() * 2 * Math.PI,
+              Math.random() * 2 * Math.PI,
+              Math.random() * 2 * Math.PI,
+            );
+          }
         }
       }
     });

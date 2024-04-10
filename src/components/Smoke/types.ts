@@ -16,6 +16,7 @@ export type ParticleMaterialGenerator = (
 ) => Material;
 
 export type SmokeProps = {
+  enableFrustumCulling?: boolean;
   turbulenceStrength?: ThreeAxisValue;
   enableTurbulence?: boolean;
   maxVelocity?: number;
