@@ -34,7 +34,7 @@ export type SmokeProps = {
   enableWind?: boolean;
   enableRotation?: boolean;
   rotation?: ThreeAxisValue;
-  textures: [string, ...rest: string[]];
+  textures?: [string, ...rest: string[]];
   particleGeometry?: ParticleGeometryGenerator;
   particleMaterial?: ParticleMaterialGenerator;
 };

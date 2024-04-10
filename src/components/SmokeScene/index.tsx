@@ -1,48 +1,40 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { Smoke, SmokeProps } from "../Smoke";
-import smokeImage from "../../core/assets/smoke-default.png";
+import { Smoke } from "../Smoke";
 import * as THREE from "three";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { SmokeSceneProps } from "./types";
 
-export const SmokeScene = (
-  props: Omit<SmokeProps, "textures"> & {
-    textures?: SmokeProps["textures"];
-  },
-) => {
+export const SmokeScene = ({
+  smoke,
+  suspenseFallback,
+  disableDefaultLights,
+  camera,
+  scene,
+  ambientLightProps,
+  directionalLightProps,
+  ...rest
+}: SmokeSceneProps) => {
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        position: "fixed",
+    <Canvas
+      camera={{ fov: 60, position: [0, 0, 500], far: 6000, ...(camera as any) }}
+      scene={{
+        background: new THREE.Color("black"),
+        ...(scene as any),
       }}
+      {...rest}
     >
-      <Canvas
-        camera={{ fov: 60, position: [0, 0, 500], far: 6000 }}
-        scene={{
-          background: new THREE.Color("black"),
-        }}
-      >
-        <directionalLight color="white" intensity={1} position={[-1, 0, 1]} />
-        <ambientLight color="white" intensity={1} />
+      {!disableDefaultLights && (
+        <>
+          <directionalLight intensity={1} position={[-1, 0, 1]} {...directionalLightProps} />
+          <ambientLight intensity={1} {...ambientLightProps} />
+        </>
+      )}
 
-        <Suspense fallback={null}>
-          <Smoke {...props} textures={props.textures || [smokeImage]} />
-        </Suspense>
-
-        <Stats />
-
-        <OrbitControls
-          enableDamping={true}
-          enableZoom={true}
-          dampingFactor={0.01}
-          autoRotate={false}
-          autoRotateSpeed={-1}
-          minPolarAngle={Math.PI / 2 - 0.5}
-          maxPolarAngle={Math.PI / 2 - 0.01}
-        />
-      </Canvas>
-    </div>
+      <Suspense fallback={suspenseFallback}>
+        <Smoke {...smoke} />
+      </Suspense>
+    </Canvas>
   );
 };
+
+export * from "./types";
