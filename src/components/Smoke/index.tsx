@@ -57,7 +57,7 @@ export const Smoke = ({
   windDirection = [1, 0, 0],
   enableWind = false,
   enableRotation = true,
-  rotation = [0, 0, 0.0011],
+  rotation = [0, 0, 0.0021],
   textures,
   particleGeometry = getDefaultParticleGeometryGenerator(),
   particleMaterial = getDefaultParticleMaterialGenerator(),
@@ -180,6 +180,8 @@ export const Smoke = ({
     size,
   ]);
 
+  const tempVec3 = useMemo(() => new THREE.Vector3(), []);
+
   useFrame(() => {
     particles.forEach((particle) => {
       const velocity: THREE.Vector3 = particle.userData.velocity;
@@ -188,14 +190,14 @@ export const Smoke = ({
       // Apply turbulence if enabled
       if (enableTurbulence) {
         // Calculate turbulence force vector
-        const turbulenceForce = new THREE.Vector3(
+        tempVec3.set(
           Math.sin(turbulence.x) * turbulence.length() * turbulenceStrength[0],
           Math.sin(turbulence.y) * turbulence.length() * turbulenceStrength[1],
           Math.sin(turbulence.z) * turbulence.length() * turbulenceStrength[2],
         );
 
         // Apply turbulence force to velocity
-        velocity.add(turbulenceForce);
+        velocity.add(tempVec3);
       }
 
       // Apply wind effect if enabled
@@ -233,8 +235,8 @@ export const Smoke = ({
       ) {
         // Reset velocity
         if (velocity) {
-          const center = new THREE.Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
-          const targetDirection = center.clone().sub(particle.position).normalize();
+          const center = tempVec3.set((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+          const targetDirection = center.sub(particle.position).normalize();
           velocity.add(targetDirection.multiplyScalar(velocityResetFactor));
         }
 

@@ -19,13 +19,13 @@ export const SmokeScene = (
       }}
     >
       <Canvas
-        camera={{ fov: 60, position: [0, 0, 1200], far: 6000 }}
+        camera={{ fov: 60, position: [0, 0, 500], far: 6000 }}
         scene={{
           background: new THREE.Color("black"),
         }}
       >
-        <directionalLight color="white" intensity={2} position={[-1, 0, 1]} />
-        <ambientLight color="white" intensity={2} />
+        <directionalLight color="white" intensity={1} position={[-1, 0, 1]} />
+        <ambientLight color="white" intensity={1} />
 
         <Suspense fallback={null}>
           <Smoke {...props} textures={props.textures || [smokeImage]} />
