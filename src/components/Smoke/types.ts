@@ -6,13 +6,13 @@ export type TwoAxisValue = [x: number, y: number];
 
 export type ParticleGeometryGenerator = (
   index: number,
-  props: Required<SmokeProps>,
+  props: Required<Pick<SmokeProps, "size" | "density">>,
 ) => BufferGeometry;
 
 export type ParticleMaterialGenerator = (
   index: number,
   textures: Texture[],
-  props: Required<SmokeProps>,
+  props: Required<Pick<SmokeProps, "opacity" | "density" | "color">>,
 ) => Material;
 
 export type SmokeProps = {

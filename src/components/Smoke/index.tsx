@@ -1,7 +1,7 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { SmokeProps } from "./types";
 import * as THREE from "three";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import smokeImage from "../../core/assets/smoke-default.png";
 import {
   getDefaultParticleGeometryGenerator,
@@ -31,55 +31,6 @@ export const Smoke = ({
   particleGeometry = getDefaultParticleGeometryGenerator(),
   particleMaterial = getDefaultParticleMaterialGenerator(),
 }: SmokeProps) => {
-  const props: Required<SmokeProps> = useMemo(
-    () => ({
-      enableFrustumCulling,
-      turbulenceStrength,
-      enableTurbulence,
-      maxVelocity,
-      velocityResetFactor,
-      minBounds,
-      maxBounds,
-      opacity,
-      color,
-      density,
-      size,
-      castShadow,
-      receiveShadow,
-      windStrength,
-      windDirection,
-      enableWind,
-      enableRotation,
-      rotation,
-      textures,
-      particleGeometry,
-      particleMaterial,
-    }),
-    [
-      enableFrustumCulling,
-      turbulenceStrength,
-      enableTurbulence,
-      maxVelocity,
-      velocityResetFactor,
-      minBounds,
-      maxBounds,
-      opacity,
-      color,
-      density,
-      size,
-      castShadow,
-      receiveShadow,
-      windStrength,
-      windDirection,
-      enableWind,
-      enableRotation,
-      rotation,
-      textures,
-      particleGeometry,
-      particleMaterial,
-    ],
-  );
-
   if (textures.length === 0) {
     throw new Error("No textures provided");
   }
@@ -92,16 +43,16 @@ export const Smoke = ({
   const boundingBox = useMemo(() => new THREE.Box3(), []);
 
   const geometries = useMemo(
-    () => Array.from({ length: density }, (_, index) => particleGeometry(index, props)),
-    [density, particleGeometry, props],
+    () => Array.from({ length: density }, (_, index) => particleGeometry(index, { size, density })),
+    [density, particleGeometry, size],
   );
 
   const materials = useMemo(
     () =>
       Array.from({ length: density }, (_, index) =>
-        particleMaterial(index, textureVariants, props),
+        particleMaterial(index, textureVariants, { opacity, density, color }),
       ),
-    [density, particleMaterial, props, textureVariants],
+    [color, density, opacity, particleMaterial, textureVariants],
   );
 
   const particles = useMemo(() => {
@@ -113,48 +64,49 @@ export const Smoke = ({
       const z = Math.random() * (maxBounds[2] - minBounds[2]) + minBounds[2];
 
       const particle = new THREE.Mesh(geometries[p], materials[p]);
+      particle.castShadow = castShadow;
+      particle.receiveShadow = receiveShadow;
       particle.position.set(x, y, z);
-
-      particle.userData.size = new THREE.Vector3(size[0], size[1], size[2]).length() / 2;
-
-      particle.userData.velocity = new THREE.Vector3(
-        Math.random() * maxVelocity[0] * 2 - maxVelocity[0],
-        Math.random() * maxVelocity[1] * 2 - maxVelocity[1],
-        Math.random() * maxVelocity[2] * 2 - maxVelocity[2],
-      );
-
-      if (enableRotation) {
-        const [rx, ry, rz] = rotation;
-        const rotationX = Math.random() * rx * 2 - rx;
-        const rotationY = Math.random() * ry * 2 - ry;
-        const rotationZ = Math.random() * rz * 2 - rz;
-        particle.rotation.set(rotationX, rotationY, rotationZ);
-      }
-
-      if (enableTurbulence) {
-        particle.userData.turbulence = new THREE.Vector3(
-          Math.random() * 2 * Math.PI,
-          Math.random() * 2 * Math.PI,
-          Math.random() * 2 * Math.PI,
-        );
-      }
 
       smokeParticles.push(particle);
     }
 
     return smokeParticles;
-  }, [
-    density,
-    enableRotation,
-    enableTurbulence,
-    geometries,
-    materials,
-    maxBounds,
-    maxVelocity,
-    minBounds,
-    rotation,
-    size,
-  ]);
+  }, [castShadow, density, geometries, materials, maxBounds, minBounds, receiveShadow]);
+
+  useEffect(() => {
+    particles.forEach((particle) => {
+      particle.userData.velocity = new THREE.Vector3(
+        Math.random() * maxVelocity[0] * 2 - maxVelocity[0],
+        Math.random() * maxVelocity[1] * 2 - maxVelocity[1],
+        Math.random() * maxVelocity[2] * 2 - maxVelocity[2],
+      );
+    });
+  }, [maxVelocity, particles]);
+
+  useEffect(() => {
+    if (enableRotation) {
+      particles.forEach((particle) => {
+        const [rx, ry, rz] = rotation;
+        const rotationX = Math.random() * rx * 2 - rx;
+        const rotationY = Math.random() * ry * 2 - ry;
+        const rotationZ = Math.random() * rz * 2 - rz;
+        particle.rotation.set(rotationX, rotationY, rotationZ);
+      });
+    }
+  }, [enableRotation, particles, rotation]);
+
+  useEffect(() => {
+    if (enableTurbulence) {
+      particles.forEach((particle) => {
+        particle.userData.turbulence = new THREE.Vector3(
+          Math.random() * 2 * Math.PI,
+          Math.random() * 2 * Math.PI,
+          Math.random() * 2 * Math.PI,
+        );
+      });
+    }
+  }, [enableRotation, enableTurbulence, particles, rotation]);
 
   const tempVec3 = useMemo(() => new THREE.Vector3(), []);
 
