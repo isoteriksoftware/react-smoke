@@ -1,14 +1,14 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { SmokeProps } from "./types";
 import * as THREE from "three";
-import { useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo } from "react";
 import smokeImage from "../../core/assets/smoke-default.png";
 import {
   getDefaultParticleGeometryGenerator,
   getDefaultParticleMaterialGenerator,
 } from "../../core";
 
-export const Smoke = ({
+const Component = ({
   enableFrustumCulling = true,
   turbulenceStrength = [0.001, 0.001, 0.001],
   enableTurbulence = false,
@@ -35,8 +35,6 @@ export const Smoke = ({
     throw new Error("No textures provided");
   }
 
-  const particlesRef = useRef<THREE.Mesh[]>([]);
-
   const textureVariants = useLoader(THREE.TextureLoader, textures);
 
   const { camera } = useThree();
@@ -57,7 +55,7 @@ export const Smoke = ({
     [color, density, opacity, particleMaterial, textureVariants],
   );
 
-  useEffect(() => {
+  const particles = useMemo(() => {
     const smokeParticles = [];
 
     for (let p = 0; p < density; p++) {
@@ -73,10 +71,8 @@ export const Smoke = ({
       smokeParticles.push(particle);
     }
 
-    particlesRef.current = smokeParticles;
+    return smokeParticles;
   }, [castShadow, density, geometries, materials, maxBounds, minBounds, receiveShadow]);
-
-  const particles = particlesRef.current;
 
   useEffect(() => {
     particles.forEach((particle) => {
@@ -209,5 +205,6 @@ export const Smoke = ({
   );
 };
 
+export const Smoke = memo(Component);
 export * from "./types";
 export const defaultSmokeTexture = smokeImage;
