@@ -4,7 +4,7 @@ import { AmbientLightProps, CanvasProps, DirectionalLightProps } from "@react-th
 
 export type SmokeSceneProps = Omit<CanvasProps, "children"> &
   PropsWithChildren<{
-    smoke: SmokeProps;
+    smoke?: SmokeProps;
     suspenseFallback?: ReactNode;
     disableDefaultLights?: boolean;
     ambientLightProps?: AmbientLightProps;
