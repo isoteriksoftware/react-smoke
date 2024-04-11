@@ -8,44 +8,28 @@ This library provides React components to create awesome 3D galleries. It suppor
 Play with the [demo](https://react-smoke-demo.vercel.app/) to see what you can do with this library.
 
 ```bash
-npm install react-smoke three @react-three/fiber @react-three/drei
+npm install react-smoke three @react-three/fiber
 ```
 
 or
 
 ```bash
-yarn add react-smoke three @react-three/fiber @react-three/drei
+yarn add react-smoke three @react-three/fiber
 ```
 
 ## Peer Dependencies
 
-This library is designed to work alongside `@react-three/drei`, `@react-three/fiber`, and `three.js`. These are listed as peer dependencies, meaning that it expects these packages to be present in your project:
+This library is designed to work alongside `@react-three/drei`, and `@react-three/fiber`. These are listed as peer dependencies, meaning that it expects these packages to be present in your project:
 
 - `three.js`: A JavaScript 3D library that creates and displays animated 3D computer graphics in a web browser.
 - `@react-three/fiber`: A React renderer for three.js that brings declarative, reactive, and component-based patterns to 3D rendering.
-- `@react-three/drei`: A useful collection of helpers and abstractions for react-three-fiber.
 
 As peer dependencies, they are not automatically installed when you install this library. You need to manually install them in your project, if not already present. This approach helps to avoid version conflicts and reduce bundle size.
 
 ## Basic Usage
 
 ```jsx
-import { Gallery, GalleryScene, SolidColorItem, ImageItem, VideoItem } from "react-smoke";
 
-const App = () => {
-  return (
-    <GalleryScene>
-      <Gallery>
-        <SolidColorItem color="#ff0000" />
-        <ImageItem src="https://picsum.photos/200/300" />
-        <VideoItem
-          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-          crossOrigin="anonymous"
-        />
-      </Gallery>
-    </GalleryScene>
-  );
-};
 ```
 
 This renders a gallery with three items: a solid color, an image, and a video. The gallery is rendered in a canvas element using `react-three-fiber`.
@@ -53,18 +37,7 @@ This renders a gallery with three items: a solid color, an image, and a video. T
 ## Gallery
 
 ```tsx
-interface GalleryProps extends Omit<GroupProps, "children"> {
-  children: GalleryChildren;
-  ground?: GroundProps;
-  disableGround?: boolean;
-  item?: {
-    width?: number;
-    height?: number;
-    radialSegments?: number;
-    heightSegments?: number;
-    innerRadiusPercent?: number;
-  };
-}
+
 ```
 
 The `Gallery` component is the container for all items in the gallery. It is responsible for laying out the items in a 3D space. It also provides a number of properties that can be used to customize the gallery:

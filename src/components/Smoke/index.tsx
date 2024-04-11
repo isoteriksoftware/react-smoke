@@ -12,8 +12,8 @@ export const Smoke = ({
   enableFrustumCulling = true,
   turbulenceStrength = [0.001, 0.001, 0.001],
   enableTurbulence = false,
-  maxVelocity = 0.5,
-  velocityResetFactor = 0.05,
+  maxVelocity = [0.5, 0.5, 0],
+  velocityResetFactor = 0.001,
   minBounds = [-800, -800, -800],
   maxBounds = [800, 800, 800],
   opacity = 0.5,
@@ -118,9 +118,9 @@ export const Smoke = ({
       particle.userData.size = new THREE.Vector3(size[0], size[1], size[2]).length() / 2;
 
       particle.userData.velocity = new THREE.Vector3(
-        Math.random() * maxVelocity * 2 - maxVelocity,
-        Math.random() * maxVelocity * 2 - maxVelocity,
-        Math.random() * maxVelocity * 2 - maxVelocity,
+        Math.random() * maxVelocity[0] * 2 - maxVelocity[0],
+        Math.random() * maxVelocity[1] * 2 - maxVelocity[1],
+        Math.random() * maxVelocity[2] * 2 - maxVelocity[2],
       );
 
       if (enableRotation) {
@@ -197,7 +197,9 @@ export const Smoke = ({
         }
 
         // Clamp velocity to maximum value
-        velocity.clampScalar(-maxVelocity, maxVelocity);
+        velocity.x = THREE.MathUtils.clamp(velocity.x, -maxVelocity[0], maxVelocity[0]);
+        velocity.y = THREE.MathUtils.clamp(velocity.y, -maxVelocity[1], maxVelocity[1]);
+        velocity.z = THREE.MathUtils.clamp(velocity.z, -maxVelocity[2], maxVelocity[2]);
         velocity.z = 0; // Disable z-axis movement
 
         // Apply velocity

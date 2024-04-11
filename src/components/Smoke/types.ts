@@ -19,7 +19,7 @@ export type SmokeProps = {
   enableFrustumCulling?: boolean;
   turbulenceStrength?: ThreeAxisValue;
   enableTurbulence?: boolean;
-  maxVelocity?: number;
+  maxVelocity?: ThreeAxisValue;
   velocityResetFactor?: number;
   minBounds?: ThreeAxisValue;
   maxBounds?: ThreeAxisValue;
