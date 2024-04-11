@@ -106,7 +106,7 @@ export const Smoke = ({
         );
       });
     }
-  }, [enableRotation, enableTurbulence, particles, rotation]);
+  }, [enableTurbulence, particles]);
 
   const tempVec3 = useMemo(() => new THREE.Vector3(), []);
 
