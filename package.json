@@ -41,7 +41,6 @@
   "peerDependencies": {
     "react": ">=18.2.0",
     "react-dom": ">=18.2.0",
-    "@react-three/drei": ">=9.105.3",
     "@react-three/fiber": ">=8.16.1",
     "three": ">=0.163.0"
   },
@@ -69,7 +68,6 @@
     "vite-plugin-dts": "^3.6.3",
     "vite-plugin-linter": "^2.0.7",
     "vite-tsconfig-paths": "^4.2.1",
-    "@react-three/drei": "^9.105.3",
     "@react-three/fiber": "^8.16.1",
     "three": "^0.163.0"
   },
@@ -80,11 +78,14 @@
   "description": "Effortlessly integrate captivating smoke effects into your React applications using Three.js and React Three Fiber (R3F)",
   "keywords": [
     "smoke",
+    "fire",
+    "cloud",
+    "react-fire",
+    "react-cloud",
     "react-smoke",
     "react smoke",
     "react",
     "react-three-fiber",
-    "react-three-drei",
     "threejs",
     "3d"
   ],

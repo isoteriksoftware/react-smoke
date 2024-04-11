@@ -12,6 +12,7 @@ export const SmokeScene = ({
   scene,
   ambientLightProps,
   directionalLightProps,
+  children,
   ...rest
 }: SmokeSceneProps) => {
   return (
@@ -33,6 +34,8 @@ export const SmokeScene = ({
       <Suspense fallback={suspenseFallback}>
         <Smoke {...smoke} />
       </Suspense>
+
+      {children}
     </Canvas>
   );
 };

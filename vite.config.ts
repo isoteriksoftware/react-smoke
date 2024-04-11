@@ -34,12 +34,11 @@ export default defineConfig((configEnv) => ({
           "react-dom": "ReactDOM",
           three: "THREE",
           "@react-three/fiber": "ReactThreeFiber",
-          "@react-three/drei": "Drei",
         },
       },
     },
   },
   optimizeDeps: {
-    exclude: ["react", "react-dom", "three", "@react-three/fiber", "@react-three/drei"],
+    exclude: ["react", "react-dom", "three", "@react-three/fiber"],
   },
 }));
