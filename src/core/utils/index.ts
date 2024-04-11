@@ -63,7 +63,7 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
  */
 export const getMultiColorParticleMaterialGenerator = (
   colors: [THREE.Color, THREE.Color, ...rest: THREE.Color[]],
-  sizeDeterminant: "colors" | "textures" | "density" = "textures",
+  sizeDeterminant: "colors" | "textures" | "density" = "colors",
 ): ParticleMaterialGenerator => {
   let materials: THREE.MeshLambertMaterial[];
 

@@ -252,3 +252,4 @@ export const Smoke = ({
 };
 
 export * from "./types";
+export const defaultSmokeTexture = smokeImage;
