@@ -1,4 +1,4 @@
-![Preview](https://github.com/isoteriksoftware/react-smoke/assets/50753501/109d9120-07f0-46fd-b43e-21a127979e25)
+![Preview](https://github.com/isoteriksoftware/react-smoke/assets/50753501/48168255-000f-4169-acfc-f21bc55db0b1)
 
 [![Version](https://img.shields.io/npm/v/react-smoke?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/react-smoke)
 [![Downloads](https://img.shields.io/npm/dt/react-smoke.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/react-smoke)
