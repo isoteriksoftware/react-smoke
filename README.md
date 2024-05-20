@@ -3,10 +3,19 @@
 [![Version](https://img.shields.io/npm/v/react-smoke)](https://www.npmjs.com/package/react-smoke)
 [![Downloads](https://img.shields.io/npm/dt/react-smoke.svg)](https://www.npmjs.com/package/react-smoke)
 
-Effortlessly integrate captivating smoke effects into your React applications using Three.js and React Three Fiber (R3F)
+`react-smoke` is a powerful and flexible solution for rendering stunning smoke effects in your React applications. Built on top of React Three Fiber (R3F) and Three.js, this library leverages the power of modern WebGL to bring high-fidelity, realistic smoke simulations to the web.
 
-Explore the [demo](https://react-smoke-demo.vercel.app/) to see the library in action. 
+## Features
+- **Realistic Smoke Rendering:** Create visually impressive smoke effects with realistic motion and appearance.
+- **Seamless Integration:** Designed to work seamlessly within your React projects using R3F and Three.js.
+- **Customizable Effects:** Easily adjust parameters such as density, wind, turbulence, and more to fit your needs.
+- **Performance Optimized:** Efficient rendering techniques ensure smooth performance even with complex smoke simulations.
+- **Easy to Use:** Simple and intuitive API makes it easy to add 3D smoke effects to your application with minimal code.
 
+## Demo
+Check out the [live demo (playground)](https://react-smoke-demo.vercel.app/) to see `react-smoke` in action and explore its capabilities.
+
+## Installation
 ```bash
 npm install react-smoke three @react-three/fiber
 ```
