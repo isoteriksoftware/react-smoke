@@ -32,21 +32,31 @@ const Component = ({
   particleMaterial = getDefaultParticleMaterialGenerator(),
 }: SmokeProps) => {
   if (textures.length === 0) {
-    throw new Error("No textures provided");
+    throw new Error("No texture provided");
   }
 
+  /** Loads textures */
   const textureVariants = useLoader(THREE.TextureLoader, textures);
 
   const { camera } = useThree();
 
   const frustum = useMemo(() => new THREE.Frustum(), []);
   const boundingBox = useMemo(() => new THREE.Box3(), []);
+  const tempVec3 = useMemo(() => new THREE.Vector3(), []);
 
+  /**
+   * Generates particle geometries.
+   * The length of the array is determined by the density. This allows custom geometry generators be flexible in their implementation.
+   */
   const geometries = useMemo(
     () => Array.from({ length: density }, (_, index) => particleGeometry(index, { size, density })),
     [density, particleGeometry, size],
   );
 
+  /**
+   * Generates particle materials.
+   * The length of the array is determined by the density. This allows custom material generators be flexible in their implementation.
+   */
   const materials = useMemo(
     () =>
       Array.from({ length: density }, (_, index) =>
@@ -55,8 +65,12 @@ const Component = ({
     [color, density, opacity, particleMaterial, textureVariants],
   );
 
+  /**
+   * Generates particles.
+   * Each particle is assigned a random position within the bounds.
+   */
   const particles = useMemo(() => {
-    const smokeParticles = [];
+    const smokeParticles: THREE.Mesh[] = [];
 
     for (let p = 0; p < density; p++) {
       const x = Math.random() * (maxBounds[0] - minBounds[0]) + minBounds[0];
@@ -74,6 +88,28 @@ const Component = ({
     return smokeParticles;
   }, [castShadow, density, geometries, materials, maxBounds, minBounds, receiveShadow]);
 
+  /**
+   * Disposes of the meshes when the component is unmounted or particles are updated.
+   */
+  useEffect(() => {
+    // Return a cleanup function that disposes of the meshes
+    return () => {
+      particles.forEach((particle) => {
+        particle.geometry.dispose();
+
+        const material = particle.material;
+        if (Array.isArray(material)) {
+          material.forEach((m) => m.dispose());
+        } else {
+          material.dispose();
+        }
+      });
+    };
+  }, [particles]);
+
+  /**
+   * Applies random initial velocities to particles.
+   */
   useEffect(() => {
     particles.forEach((particle) => {
       particle.userData.velocity = new THREE.Vector3(
@@ -84,6 +120,9 @@ const Component = ({
     });
   }, [maxVelocity, particles]);
 
+  /**
+   * Applies random initial rotations to particles.
+   */
   useEffect(() => {
     if (enableRotation) {
       particles.forEach((particle) => {
@@ -96,6 +135,9 @@ const Component = ({
     }
   }, [enableRotation, particles, rotation]);
 
+  /**
+   * Applies random initial turbulence to particles.
+   */
   useEffect(() => {
     if (enableTurbulence) {
       particles.forEach((particle) => {
@@ -108,9 +150,12 @@ const Component = ({
     }
   }, [enableTurbulence, particles]);
 
-  const tempVec3 = useMemo(() => new THREE.Vector3(), []);
-
+  /**
+   * Updates particle positions and applies forces.
+   * This function is called on each frame.
+   */
   useFrame((_, delta) => {
+    // Updates frustum planes if frustum culling is enabled
     if (enableFrustumCulling) {
       camera.updateMatrixWorld();
       frustum.setFromProjectionMatrix(camera.projectionMatrix);
@@ -124,6 +169,7 @@ const Component = ({
         boundingBox.setFromObject(particle);
       }
 
+      // Only update particles within the camera's view if frustum culling is enabled or update all particles if disabled
       if (!enableFrustumCulling || (enableFrustumCulling && frustum.intersectsBox(boundingBox))) {
         const velocity: THREE.Vector3 = particle.userData.velocity;
         const turbulence = particle.userData.turbulence;

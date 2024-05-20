@@ -41,7 +41,7 @@ export type SmokeProps = {
   /**
    * The turbulence strength.
    * This value determines the strength of the turbulence applied to the particles.
-   * @default [0.001, 0.001, 0.001]
+   * @default [0.01, 0.01, 0.01]
    */
   turbulenceStrength?: ThreeAxisValue;
 
@@ -100,7 +100,7 @@ export type SmokeProps = {
 
   /**
    * The size of the particles.
-   * This value determines the size of the particles on each axis.
+   * This value determines the size of each particle.
    * @default [1000, 1000, 1000]
    */
   size?: ThreeAxisValue;
@@ -120,7 +120,7 @@ export type SmokeProps = {
   /**
    * The strength of the wind.
    * This value determines the strength of the wind applied to the particles.
-   * @default [0.001, 0.001, 0.001]
+   * @default [0.01, 0.01, 0.01]
    */
   windStrength?: ThreeAxisValue;
 
@@ -146,12 +146,12 @@ export type SmokeProps = {
   /**
    * The rotation of the particles.
    * This value determines the rotation of the particles on each axis.
-   * @default [0, 0, 0.0011]
+   * @default [0, 0, 0.1]
    */
   rotation?: ThreeAxisValue;
 
   /**
-   * The textures to use for the particles.
+   * The paths of the textures to use for the particles.
    * @default [defaultSmokeImage]
    */
   textures?: [string, ...rest: string[]];
