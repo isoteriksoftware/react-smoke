@@ -10,10 +10,10 @@ import {
 
 const Component = ({
   enableFrustumCulling = true,
-  turbulenceStrength = [0.001, 0.001, 0.001],
+  turbulenceStrength = [0.01, 0.01, 0.01],
   enableTurbulence = false,
-  maxVelocity = [0.5, 0.5, 0],
-  velocityResetFactor = 0.001,
+  maxVelocity = [30, 30, 0],
+  velocityResetFactor = 10,
   minBounds = [-800, -800, -800],
   maxBounds = [800, 800, 800],
   opacity = 0.5,
@@ -22,11 +22,11 @@ const Component = ({
   size = [1000, 1000, 1000],
   castShadow = false,
   receiveShadow = false,
-  windStrength = [0.001, 0.001, 0.001],
+  windStrength = [0.01, 0.01, 0.01],
   windDirection = [1, 0, 0],
   enableWind = false,
   enableRotation = false,
-  rotation = [0, 0, 0.0011],
+  rotation = [0, 0, 0.1],
   textures = [smokeImage],
   particleGeometry = getDefaultParticleGeometryGenerator(),
   particleMaterial = getDefaultParticleMaterialGenerator(),
@@ -110,7 +110,7 @@ const Component = ({
 
   const tempVec3 = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (enableFrustumCulling) {
       camera.updateMatrixWorld();
       frustum.setFromProjectionMatrix(camera.projectionMatrix);
@@ -155,14 +155,16 @@ const Component = ({
         velocity.z = 0; // Disable z-axis movement
 
         // Apply velocity
-        particle.position.add(velocity);
+        particle.position.add(
+          tempVec3.set(velocity.x, velocity.y, velocity.z).multiplyScalar(delta),
+        );
 
         // Apply rotation
         if (enableRotation) {
           const [rx, ry, rz] = rotation;
-          particle.rotation.x += rx;
-          particle.rotation.y += ry;
-          particle.rotation.z += rz;
+          particle.rotation.x += rx * delta;
+          particle.rotation.y += ry * delta;
+          particle.rotation.z += rz * delta;
         }
 
         // Smoothly transition particles back within the bounds

@@ -9,26 +9,25 @@ import * as THREE from "three";
 export const getDefaultParticleGeometryGenerator = (): ParticleGeometryGenerator => {
   let geometry: THREE.PlaneGeometry;
 
-  const generator: ParticleGeometryGenerator = (_, { size }) => {
+  return (_, { size }) => {
     if (!geometry) {
       geometry = new THREE.PlaneGeometry(size[0], size[1]);
     }
 
     return geometry;
   };
-
-  return generator;
 };
 
 /**
  * Returns a default particle material generator function.
  * This generator creates and reuses materials based on the provided textures and color.
+ * A material is generated for each texture.
  * @returns A particle material generator function.
  */
 export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator => {
   let materials: THREE.MeshLambertMaterial[];
 
-  const generator: ParticleMaterialGenerator = (index, textures, { opacity, color }) => {
+  return (index, textures, { opacity, color }) => {
     if (!materials) {
       materials = [];
 
@@ -50,8 +49,6 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
 
     return materials[index % materials.length];
   };
-
-  return generator;
 };
 
 /**
@@ -67,7 +64,7 @@ export const getMultiColorParticleMaterialGenerator = (
 ): ParticleMaterialGenerator => {
   let materials: THREE.MeshLambertMaterial[];
 
-  const generator: ParticleMaterialGenerator = (index, textures, { opacity, density }) => {
+  return (index, textures, { opacity, density }) => {
     if (!materials) {
       materials = [];
 
@@ -115,6 +112,4 @@ export const getMultiColorParticleMaterialGenerator = (
 
     return materials[index % materials.length];
   };
-
-  return generator;
 };

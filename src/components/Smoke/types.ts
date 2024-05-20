@@ -6,11 +6,6 @@ import { BufferGeometry, Material, Texture, Color } from "three";
 export type ThreeAxisValue = [x: number, y: number, z: number];
 
 /**
- * A two-axis value.
- */
-export type TwoAxisValue = [x: number, y: number];
-
-/**
  * A particle geometry generator function.
  * @param index The index of the particle.
  * @param props The smoke properties.
@@ -65,7 +60,7 @@ export type SmokeProps = {
 
   /**
    * The velocity reset factor.
-   * This factor is used to reset the velocity of particles that exceed the bounds of the particles.
+   * This factor is used to reset the velocity of particles that exceed the bounds of the smoke effect particles.
    * @default 0.001
    */
   velocityResetFactor?: number;
@@ -92,7 +87,7 @@ export type SmokeProps = {
 
   /**
    * The color of the particles.
-   * @default new THREE.Color(0xffffff)
+   * @default THREE.Color(0xffffff)
    */
   color?: Color;
 

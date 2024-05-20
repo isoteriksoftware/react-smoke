@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Smoke } from "../Smoke";
 import * as THREE from "three";
 import { SmokeSceneProps } from "./types";
@@ -15,11 +15,13 @@ export const SmokeScene = ({
   children,
   ...rest
 }: SmokeSceneProps) => {
+  const bgColor = useMemo(() => new THREE.Color("black"), []);
+
   return (
     <Canvas
       camera={{ fov: 60, position: [0, 0, 500], far: 6000, ...(camera as any) }}
       scene={{
-        background: new THREE.Color("black"),
+        background: bgColor,
         ...(scene as any),
       }}
       {...rest}
