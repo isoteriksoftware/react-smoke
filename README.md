@@ -67,12 +67,11 @@ export default function App() {
   );
 }
 ```
-
 This renders smoke effects using the default [smoke texture](https://github.com/isoteriksoftware/react-smoke/blob/main/src/core/assets/smoke-default.png). 
 `<SmokeScene/>` is a wrapper around the `Canvas` component from `@react-three/fiber`. You can customize it or use it as a starting point for your own smoke effects.
 
 ## Advanced Usage
-
+If you already have a Three.js scene set up, you can use the `<Smoke/>` component to render smoke effects. This provides more control over the smoke effects and allows you to integrate them into existing scenes.
 ```tsx
 // App.tsx
 import { Smoke } from "react-smoke";
