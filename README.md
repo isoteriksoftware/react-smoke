@@ -28,7 +28,7 @@ yarn add react-smoke three @react-three/fiber
 
 ## Peer Dependencies
 
-This library is designed to work alongside `@react-three/drei`, and `@react-three/fiber`. These are listed as peer dependencies, meaning that it expects these packages to be present in your project:
+This library is designed to work alongside `three.js` and `@react-three/fiber`. These are listed as peer dependencies, meaning that it expects these packages to be present in your project:
 
 - `three.js`: A JavaScript 3D library that creates and displays animated 3D computer graphics in a web browser.
 - `@react-three/fiber`: A React renderer for three.js that brings declarative, reactive, and component-based patterns to 3D rendering.
