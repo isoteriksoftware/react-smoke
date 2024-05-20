@@ -54,14 +54,14 @@ export type SmokeProps = {
   /**
    * The maximum velocity.
    * This value determines the maximum velocity of the particles on each axis.
-   * @default [0.5, 0.5, 0]
+   * @default [30, 30, 0]
    */
   maxVelocity?: ThreeAxisValue;
 
   /**
    * The velocity reset factor.
    * This factor is used to reset the velocity of particles that exceed the bounds of the smoke effect particles.
-   * @default 0.001
+   * @default 10
    */
   velocityResetFactor?: number;
 

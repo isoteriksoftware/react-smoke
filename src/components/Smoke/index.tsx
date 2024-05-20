@@ -8,7 +8,33 @@ import {
   getDefaultParticleMaterialGenerator,
 } from "../../core";
 
-const Component = ({
+const DEFAULT_COLOR = new THREE.Color(0xffffff);
+
+/**
+ * The smoke component.
+ * @param enableFrustumCulling Whether to enable frustum culling. When enabled, particles outside the camera's view will not be updated.
+ * @param turbulenceStrength The turbulence strength. This value determines the strength of the turbulence applied to the particles.
+ * @param enableTurbulence Whether to enable turbulence.
+ * @param maxVelocity The maximum velocity. This value determines the maximum velocity of the particles on each axis.
+ * @param velocityResetFactor The velocity reset factor. This factor is used to reset the velocity of particles that exceed the bounds of the smoke effect particles.
+ * @param minBounds The minimum bounds. This value determines the minimum bounds of the particles.
+ * @param maxBounds The maximum bounds. This value determines the maximum bounds of the particles.
+ * @param opacity The opacity of the particles.
+ * @param color The color of the particles.
+ * @param density The density of the particles.
+ * @param size The size of the particles.
+ * @param castShadow Whether the particles cast shadows.
+ * @param receiveShadow Whether the particles receive shadows.
+ * @param windStrength The wind strength. This value determines the strength of the wind applied to the particles.
+ * @param windDirection The wind direction. This value determines the direction of the wind applied to the particles.
+ * @param enableWind Whether to enable wind.
+ * @param enableRotation Whether to enable rotation.
+ * @param rotation The rotation of the particles.
+ * @param textures The texture paths of the particles.
+ * @param particleGeometry The particle geometry generator.
+ * @param particleMaterial The particle material generator.
+ */
+const SmokeComponent = ({
   enableFrustumCulling = true,
   turbulenceStrength = [0.01, 0.01, 0.01],
   enableTurbulence = false,
@@ -17,7 +43,7 @@ const Component = ({
   minBounds = [-800, -800, -800],
   maxBounds = [800, 800, 800],
   opacity = 0.5,
-  color = new THREE.Color(0xffffff),
+  color = DEFAULT_COLOR,
   density = 50,
   size = [1000, 1000, 1000],
   castShadow = false,
@@ -32,7 +58,7 @@ const Component = ({
   particleMaterial = getDefaultParticleMaterialGenerator(),
 }: SmokeProps) => {
   if (textures.length === 0) {
-    throw new Error("No texture provided");
+    throw new Error("At least one texture must be provided.");
   }
 
   /** Loads textures */
@@ -270,6 +296,6 @@ const Component = ({
   );
 };
 
-export const Smoke = memo(Component);
+export const Smoke = memo(SmokeComponent);
 export * from "./types";
 export const defaultSmokeTexture = smokeImage;

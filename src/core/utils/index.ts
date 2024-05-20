@@ -54,7 +54,7 @@ export const getDefaultParticleMaterialGenerator = (): ParticleMaterialGenerator
 /**
  * Returns a particle material generator function that generates materials with multiple colors.
  * The total number of materials generated can be based on either the number of colors, textures, or a specified density.
- * @param colors An array of colors to be used for the materials.
+ * @param colors An array of colors to be used for the materials. At least two colors are required.
  * @param sizeDeterminant Determines how many materials to generate based on the colors, textures, or a specified density.
  * @returns A particle material generator function.
  */
