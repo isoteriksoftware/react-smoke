@@ -67,26 +67,18 @@ const Component = ({
 
   /**
    * Generates particles.
-   * Each particle is assigned a random position within the bounds.
+   * The length of the array is determined by the density.
    */
   const particles = useMemo(() => {
     const smokeParticles: THREE.Mesh[] = [];
 
     for (let p = 0; p < density; p++) {
-      const x = Math.random() * (maxBounds[0] - minBounds[0]) + minBounds[0];
-      const y = Math.random() * (maxBounds[1] - minBounds[1]) + minBounds[1];
-      const z = Math.random() * (maxBounds[2] - minBounds[2]) + minBounds[2];
-
-      const particle = new THREE.Mesh(geometries[p], materials[p]);
-      particle.castShadow = castShadow;
-      particle.receiveShadow = receiveShadow;
-      particle.position.set(x, y, z);
-
+      const particle = new THREE.Mesh();
       smokeParticles.push(particle);
     }
 
     return smokeParticles;
-  }, [castShadow, density, geometries, materials, maxBounds, minBounds, receiveShadow]);
+  }, [density]);
 
   /**
    * Disposes of the meshes when the component is unmounted or particles are updated.
@@ -106,6 +98,31 @@ const Component = ({
       });
     };
   }, [particles]);
+
+  /**
+   * Updates particle positions to random locations within the bounds.
+   */
+  useEffect(() => {
+    for (let p = 0; p < particles.length; p++) {
+      const x = Math.random() * (maxBounds[0] - minBounds[0]) + minBounds[0];
+      const y = Math.random() * (maxBounds[1] - minBounds[1]) + minBounds[1];
+      const z = Math.random() * (maxBounds[2] - minBounds[2]) + minBounds[2];
+      particles[p].position.set(x, y, z);
+    }
+  }, [particles, maxBounds, minBounds]);
+
+  /**
+   * Updates particle geometries and materials.
+   */
+  useEffect(() => {
+    for (let p = 0; p < particles.length; p++) {
+      const particle = particles[p];
+      particle.geometry = geometries[p];
+      particle.material = materials[p];
+      particle.castShadow = castShadow;
+      particle.receiveShadow = receiveShadow;
+    }
+  }, [castShadow, geometries, materials, particles, receiveShadow]);
 
   /**
    * Applies random initial velocities to particles.
