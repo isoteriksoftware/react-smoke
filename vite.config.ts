@@ -27,7 +27,7 @@ export default defineConfig((configEnv) => ({
       fileName: (format) => `react-smoke.${format}.js`,
     },
     rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
+      external: [...Object.keys(packageJson.peerDependencies), 'react/jsx-runtime', 'react/jsx-dev-runtime'],
       output: {
         globals: {
           react: "React",
