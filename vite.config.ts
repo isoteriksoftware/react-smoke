@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import EsLint from "vite-plugin-linter";
 import tsConfigPaths from "vite-tsconfig-paths";
+
 const { EsLinter, linterPlugin } = EsLint;
 import * as packageJson from "./package.json";
 
@@ -27,13 +28,18 @@ export default defineConfig((configEnv) => ({
       fileName: (format) => `react-smoke.${format}.js`,
     },
     rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies), 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+      external: [
+        ...Object.keys(packageJson.peerDependencies),
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+      ],
       output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
           three: "THREE",
           "@react-three/fiber": "ReactThreeFiber",
+          "react/jsx-runtime": "ReactJsxRuntime",
         },
       },
     },
